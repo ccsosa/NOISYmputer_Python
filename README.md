@@ -5,12 +5,12 @@ Requirements:
 
 - Python 3.
   -Modules:
-    -numpy
-    -pandas
-    -subprocess
-    -re
-    -os
-    -gc
+    - [ ] -numpy
+   - [ ]  -pandas
+    - [ ] -subprocess
+    - [ ] -re
+    - [ ] -os
+    - [ ] -gc
 - Java virtual machine.
 - a VCF file representing a high quality sequencing approach and an accurated design experiment.
 - define a population type of the following options:
