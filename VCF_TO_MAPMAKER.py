@@ -7,6 +7,7 @@ NOISYmputer python step 0 VCF to mapmaker formats
 """
 
 def transform_vcf_to_mapmaker(path_to_addon,pop_type,vcf_file,parent1_id,parent2_id,output_file):
+
 #IMPORTING MODULES
     import pandas as pd
     import platform
@@ -17,7 +18,7 @@ def transform_vcf_to_mapmaker(path_to_addon,pop_type,vcf_file,parent1_id,parent2
     op_sys = platform.system()
 #CHECKING IF OUTPUT FILE WAS MADE PREVIOUSLY
     if os.path.isfile(output_file):
-        print ("VCF file converted to mapmaker format using "+pop_type+" population"+ "was made previously, loading..")
+        print ("VCF file converted to mapmaker format using "+pop_type+" population "+ " was made previously, loading...")
         output = pd.read_csv(output_file, sep=" ", skiprows=2)
         return(output)
 #RUNNING JAVA SHELL COMMMAND USING SUBPROCESS
@@ -50,9 +51,9 @@ def transform_vcf_to_mapmaker(path_to_addon,pop_type,vcf_file,parent1_id,parent2
             output = print("error!, VCF to mapmaker format failed, check parameters and try again")
             return(output)
         
-#RUNNING TEST 
-
-"""        
+#RUNNING TEST
+            
+"""
 path_to_addon = "C:/Users/cami_/Documents/MapDisto_workspace/MapDisto_plugins/MapDistoAddonsMT_v5.jar"
 pop_type = "ri_self"
 vcf_file ="C:/Users/cami_/Documents/MapDisto_data/Rice_GBS.vcf"
@@ -60,4 +61,5 @@ parent1_id = "ID152bH10-P2_CGTACG-GTGGCC"
 parent2_id = "ID152bH11-P2_GAGTGG-GTGGCC"
 output_file = "E:/rice_gbs2.txt"
 out = transform_vcf_to_mapmaker(path_to_addon,pop_type,vcf_file,parent1_id,parent2_id,output_file)
+chr_dir = "E:/CHR"
 """
