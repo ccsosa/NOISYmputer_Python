@@ -4,6 +4,13 @@ This is a repository of the implementation of NOISYmputer algorithm created by L
 Requirements:
 
 - Python 3.
+  -Modules:
+    -numpy
+    -pandas
+    -subprocess
+    -re
+    -os
+    -gc
 - Java virtual machine.
 - a VCF file representing a high quality sequencing approach and an accurated design experiment.
 - define a population type of the following options:
