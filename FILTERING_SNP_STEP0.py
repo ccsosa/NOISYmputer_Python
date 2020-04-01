@@ -65,7 +65,7 @@ def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
     
 ########################################3        
 
-
+"""
 chr_dir = "E:/CHR"
 maxFreqMD = 0.666
 maxFreqH = 0.800
@@ -73,3 +73,4 @@ minFreqA = 0.010
 minFreqB = 0.010
 n_chr = 12
 x_filtered = filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB)
+"""
