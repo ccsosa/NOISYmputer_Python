@@ -10,20 +10,26 @@ WITH VERY HIGH THRESHOLD TO AVOID CORRECTING REAL HTZ CHUNKS
 #from numba import jit
 import pandas as pd
 import numpy as np
-#from numba import jit, prange
+from numba import prange
 import time
+#import multiprocessing as mp
+import copy
+#from multiprocessing import Pool
 #from multiprocessing.pool import ThreadPool
 #import subprocess
 #@jit
 #chr_dir,n_chr,popType
+#https://numba.pydata.org/numba-doc/latest/user/parallel.html
+#https://medium.com/@mjschillawski/quick-and-easy-parallelization-in-python-32cb9027e490
 
-#@jit(parallel=True)
 def chr_read(chr_dir,n_chr,popType,WindowSize):
     start_time = time.time()
     if popType == "SSD" or popType =="DH":
-        export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_filtered_miss.txt")
-        export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_filtered_step5.txt")
-        print(export_file_path_filt+" Starting..."+ "| PopType="+popType+ " selected") 
+        export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_4.txt")
+        export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_5.txt")
+        
+        print("Starting: %s" % export_file_path_filt)
+        print("PopType: %s" % popType)
        
         split_file = pd.read_csv(export_file_path_filt, sep=" ")
         chr_pos =  split_file["#"]
@@ -32,14 +38,15 @@ def chr_read(chr_dir,n_chr,popType,WindowSize):
         sp_cols.remove(sp_cols[0])
         split_file = split_file.drop(columns=['#'])
         split_file = split_file.to_numpy()
-        print("Inds: "+ str(split_file.shape[1]) + " |" + " Chr pos:" + str(split_file.shape[0]))
-
-        for i in range(split_file.shape[1]):
-            #perc=np.round((i/((split_file.shape[1]))*100),3)
-            #print(perc)
-            tp=(correct_loci_col(split_file,WindowSize,sp_cols,i))
-            split_file2.iloc[:,(i+1)] = tp
+        print("Inds: %s" % str(split_file.shape[1]))
+        print("Chr pos: %s" % str(split_file.shape[0]))
         
+        start_time = time.time()
+        
+        for i in prange(split_file.shape[1]):
+            tp=correct_loci_col(split_file,WindowSize,sp_cols,i)
+            split_file2.iloc[:,(i+1)] = tp
+         
         split_file2["#"] = chr_pos
         split_file2.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
         split_file = pd.read_csv(export_file_path_filt, sep=" ")
@@ -48,15 +55,15 @@ def chr_read(chr_dir,n_chr,popType,WindowSize):
         return(scl)
             
     elif popType == "F2" or popType == "BC1":
-        print("--- %s popType ---" % (popType))
-        print("--- %s seconds ---" % (time.time() - start_time))
-
-        scl =0
-        return(scl)
+       print("PopType: %s" % popType)
+       scl =0
+       return(scl)
+        
 
 def correct_loci_col(split_file,WindowSize,sp_cols,i): 
     col_data = split_file[:,i]
-    for j in range(len(split_file)):
+    col_data = copy.deepcopy(col_data)
+    for j in range(len(col_data)):
         
         myRow1=j-WindowSize
         myRow2=j+WindowSize
@@ -95,13 +102,32 @@ def changes_count(split_file2,split_file):
     
     
 chr_dir = "E:/CHR"  
-n_chr = str(1)
+#n_chr = str(1)
 popType = "SSD"
 WindowSize=7    
-#num=6
+#num=mp.cpu_count()
+#print("Number of processors: ", mp.cpu_count())
+#x = chr_read(chr_dir,n_chr,popType,WindowSize,num)
 
-x = chr_read(chr_dir,n_chr,popType,WindowSize)
+x=[]
+for a in prange(1,12+1):
+    nchr = str(a)
+    x.append(chr_read(chr_dir,nchr,popType,WindowSize))
+
+"""
+x=[]
+for a in prange(1,12+1):
+    nchr = str(a)
+    x.append(chr_read(chr_dir,nchr,popType,WindowSize,num))
+
+pool = mp.Pool(mp.cpu_count())
+results = pool.starmap(chr_read, [(chr_dir,n_chr,popType,WindowSize,num) for n_chr in list(range(1,13))])
+pool.close()
+tp2 = ThreadPool(num)
+for a in range(1,12+1):
+    nchr = str(a)        
+    tp2.apply_async(chr_read(chr_dir,nchr,popType,WindowSize,num))
+tp2.close()
+"""
 
 
-
-    

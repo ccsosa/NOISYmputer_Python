@@ -11,8 +11,8 @@ import pandas as pd
 
 def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
 
-    export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_filtered.txt")
-    export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_filtered_miss.txt")
+    export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_3.txt")
+    export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_4.txt")
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
     sp_cols = list(split_file.columns)
     sp_cols.remove(sp_cols[0])
@@ -45,7 +45,7 @@ def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
 
 
 chr_dir = "E:/CHR"
-n_chr = str(1)
+#n_chr = str(1)
 
 for i in range(1,12+1):
     n_chr=str(i)

@@ -26,7 +26,7 @@ def split_by_chromosome(chr_dir,out):
 #SPLITTING FILE PER CHROMOSOME
     for i in range(len(n_chr)):
 #CHECKING IF CHROMOSOME FILE WAS ALREADY MADE
-        export_file_path = (chr_dir+"/"+n_chr[i]+".txt")
+        export_file_path = (chr_dir+"/"+n_chr[i]+"_step_2.txt")
         if os.path.isfile(export_file_path):
             print(export_file_path+" available")
         else:

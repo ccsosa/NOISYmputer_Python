@@ -16,7 +16,7 @@ import os.path
 def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
 
     export_file_path = (chr_dir+"/"+"Chr"+n_chr+".txt")
-    export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_filtered.txt")
+    export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_3.txt")
 
     retain =[]
     with open(export_file_path) as fp:
@@ -27,13 +27,13 @@ def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
             nbMD = line.count("-")
             Npop = nbA + nbB + nbH + nbMD
             
-            if(Npop > 0):
+            if Npop > 0:
                 freqA = nbA / Npop
                 freqB = nbB / Npop
                 freqH = nbH / Npop
                 freqMD = nbMD / Npop
     
-                if(freqH < maxFreqH and freqMD < maxFreqMD and freqA > minFreqA and freqB > minFreqB):
+                if freqH < maxFreqH and freqMD < maxFreqMD and freqA > minFreqA and freqB > minFreqB:
                     retain.append(True)
                 else:
                     retain.append(False)
@@ -46,6 +46,7 @@ def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
         return(print(export_file_path+" already processed!"))
     else:
         split_file = pd.read_csv(export_file_path, sep=" ")
+        
         split_file['filtered'] = retain
         split_file = split_file[split_file.filtered==1]
         split_file = split_file.drop(columns=['filtered'])
@@ -55,7 +56,7 @@ def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
         return(print(export_file_path+" filtered!"))
 ########################################     
 
-"""
+
 chr_dir = "E:/CHR"
 maxFreqMD = 0.666
 maxFreqH = 0.800
@@ -69,4 +70,3 @@ for i in range(1,12+1):
     n_chr=str(i)
     x_filtered = filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB)
 
-"""
