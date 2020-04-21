@@ -18,7 +18,7 @@ def correct_loci_row(chr_dir,n_chr,WindowSize):
     start_time = time.time()
     export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_6.txt")
     export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_7.txt")
-    print("Starting step 6: %s" % export_file_path_filt)
+    print("Starting step 7: %s" % export_file_path_filt)
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
     chr_pos =  split_file["#"]
     sp_cols = list(split_file.columns)
