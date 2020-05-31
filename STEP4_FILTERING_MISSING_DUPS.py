@@ -8,6 +8,15 @@ Created on Mon Apr 13 15:34:20 2020
 #IMPORTING MODULES
 import sys
 import pandas as pd
+from tqdm import tqdm
+
+def remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt):
+    
+    for i in tqdm(range(1,n_chrs+1),desc="filtering snps"):
+        n_chr=str(i)
+        remove_dup_snp_step(chr_dir,n_chr,missing_opt=missing_opt)
+    return("DONE!")
+    
 
 def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
 
@@ -41,12 +50,11 @@ def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
         print("error,not valid method chosen")
         sys.exit()
     
+    
    
 
 
 chr_dir = "E:/CHR"
 #n_chr = str(1)
 
-for i in range(1,12+1):
-    n_chr=str(i)
-    remove_dup_snp_step(chr_dir,n_chr,missing_opt="missing")
+remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt="missing")

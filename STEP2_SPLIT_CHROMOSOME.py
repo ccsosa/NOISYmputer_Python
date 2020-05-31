@@ -5,11 +5,14 @@ NOISYmputer python step 0 Splitting mapmaker by choromosomes
 @author: Chrystian Sosa
 @Correspondence author: Dr Mathias Lorieux
 """
+
+import re 
+import os
+from tqdm import tqdm
+
 def split_by_chromosome(chr_dir,out):
 #CALLING PYTHON MODULES
-    import re 
-    import os
-    import pandas as pd
+    
 #CHECKING IF CHROMOSOME FOLDER EXISTS
     if(os.path.isdir(chr_dir)):
         print(chr_dir, "created")
@@ -24,7 +27,9 @@ def split_by_chromosome(chr_dir,out):
     out['chr'] = chr_pos 
     n_chr = out['chr'].unique()
 #SPLITTING FILE PER CHROMOSOME
-    for i in range(len(n_chr)):
+    
+
+    for i in tqdm(range(len(n_chr)),desc='Chromosomes'):
 #CHECKING IF CHROMOSOME FILE WAS ALREADY MADE
         export_file_path = (chr_dir+"/"+n_chr[i]+"_step_2.txt")
         if os.path.isfile(export_file_path):

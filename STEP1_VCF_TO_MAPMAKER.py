@@ -6,14 +6,16 @@ NOISYmputer python step 0 VCF to mapmaker formats
 @Correspondence author: Dr Mathias Lorieux
 """
 
+import pandas as pd
+import platform
+import subprocess
+import os.path
+
 def transform_vcf_to_mapmaker(path_to_addon,pop_type,vcf_file,parent1_id,parent2_id,output_file):
 
 #IMPORTING MODULES
-    import pandas as pd
-    import platform
-    import subprocess
-    from subprocess import Popen, PIPE
-    import os.path
+    
+
 #GATHERING OPERATIVE SYSTEM
     op_sys = platform.system()
 #CHECKING IF OUTPUT FILE WAS MADE PREVIOUSLY

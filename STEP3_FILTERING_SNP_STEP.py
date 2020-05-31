@@ -10,8 +10,20 @@ NOISYmputer python FILTERING ON HTZ %, MISSING DATA %, MAF
 #IMPORTING MODULES
 import pandas as pd
 import os.path
+from tqdm import tqdm
+
 #nthreads = 4
 #size = 10**5  # CHANGED
+
+
+
+def filtering_snp_step_chr(chr_dir,n_chrs,maxFreqMD,maxFreqH,minFreqA,minFreqB):
+    
+    for i in tqdm(range(1,n_chrs+1),desc="filtering snps"):
+        n_chr=str(i)
+        filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB)
+    return("DONE!")
+
        
 def filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB):
 
@@ -62,11 +74,10 @@ maxFreqMD = 0.666
 maxFreqH = 0.800
 minFreqA = 0.010
 minFreqB = 0.010
+n_chrs=12
 #n_chr = str(1)
 #x_filtered = filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB)
 
+filtering_snp_step_chr(chr_dir,n_chrs,maxFreqMD,maxFreqH,minFreqA,minFreqB)
 
-for i in range(1,12+1):
-    n_chr=str(i)
-    x_filtered = filtering_snp_step(chr_dir,n_chr,maxFreqMD,maxFreqH,minFreqA,minFreqB)
 
