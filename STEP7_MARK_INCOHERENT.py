@@ -11,14 +11,20 @@ Created on Thu Apr 16 21:47:37 2020
 import pandas as pd
 import numpy as np
 from numba import prange
-import time
 import copy
+from tqdm import tqdm
 
-def correct_loci_row(chr_dir,n_chr,WindowSize): 
-    start_time = time.time()
+def correct_loci_row_chr(chr_dir,n_chrs,Chi2threshold,WindowSize,log_dir): 
+    for i in tqdm(range(len(n_chrs)),desc="Mark and filter incoherent loci"):
+        n_chr=str(n_chrs[i])
+        print(n_chr)
+        correct_loci_row(chr_dir,n_chr,Chi2threshold,WindowSize,log_dir)
+        
+    return("DONE!")
+    
+def correct_loci_row(chr_dir,n_chr,Chi2threshold,WindowSize,log_dir): 
     export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_6.txt")
     export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_7.txt")
-    print("Starting step 7: %s" % export_file_path_filt)
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
     chr_pos =  split_file["#"]
     sp_cols = list(split_file.columns)
@@ -26,8 +32,6 @@ def correct_loci_row(chr_dir,n_chr,WindowSize):
     sp_cols.remove(sp_cols[0])
     split_file = split_file.drop(columns=['#'])
     split_file = split_file.to_numpy()
-    print("Inds: %s" % str(split_file.shape[1]))
-    print("Chr pos: %s" % str(split_file.shape[0]))
     
     chi2SNP1=[]
     chi2SNP2=[]
@@ -106,7 +110,6 @@ def correct_loci_row(chr_dir,n_chr,WindowSize):
         split_file2.iloc[j,range(1,split_file2.shape[1])]=  row_data
 
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
-    scl = changes_count(split_file2,split_file)
     if(len(NbOfBadSNP)>0):
         print(f'removing {len(NbOfBadSNP)} loci!')
         split_file2 = split_file2.drop(NbOfBadSNP)
@@ -116,9 +119,16 @@ def correct_loci_row(chr_dir,n_chr,WindowSize):
     split_file2["#"] = chr_pos
     split_file2.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
 
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return(scl,chi2SNP1,chi2SNP2,NbOfBadSNP)
+
+    changes=(split_file.shape[0]-split_file2.shape[0])*split_file2.shape[1]
+    data =[["step","Mark and filter incoherent loci"],
+           ["chr",n_chr],
+           ["NbOfBadSNP",len(NbOfBadSNP)],
+           ["changes",changes]]
     
+    log_file_df = pd.DataFrame(data,columns=["item","status"])
+    log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step5.log",index = False, header=True)
+
 def changes_count(split_file2,split_file):
     sp_cols = list(split_file2.columns)
     sp_cols.remove(sp_cols[0])
@@ -131,15 +141,4 @@ def changes_count(split_file2,split_file):
     s_cl = sum(counts_list)
     return(s_cl)    
 
-    
-chr_dir = "E:/CHR"  
-#n_chr = str(1)
-WindowSize=30     
-Chi2threshold = 3.84
-#x = correct_loci_row(chr_dir,n_chr,WindowSize)    
-
-x=[]
-for a in prange(1,12+1):#12+1):
-    n_chr = str(a)
-    x.append(correct_loci_row(chr_dir,n_chr,WindowSize))
     

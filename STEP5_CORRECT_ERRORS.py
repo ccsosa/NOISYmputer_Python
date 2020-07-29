@@ -11,9 +11,10 @@ WITH VERY HIGH THRESHOLD TO AVOID CORRECTING REAL HTZ CHUNKS
 import pandas as pd
 import numpy as np
 from numba import prange
-import time
 #import multiprocessing as mp
 import copy
+from tqdm import tqdm
+
 #from multiprocessing import Pool
 #from multiprocessing.pool import ThreadPool
 #import subprocess
@@ -22,15 +23,23 @@ import copy
 #https://numba.pydata.org/numba-doc/latest/user/parallel.html
 #https://medium.com/@mjschillawski/quick-and-easy-parallelization-in-python-32cb9027e490
 
-def chr_read(chr_dir,n_chr,popType,WindowSize):
-    start_time = time.time()
+
+def correct_chr_read_chr(chr_dir,n_chrs,popType,WindowSize,log_dir):
+    
+    for i in tqdm(range(len(n_chrs)),desc="correct errors"):
+        n_chr=str(n_chrs[i])
+        print(n_chr)
+        correct_chr_read(chr_dir,n_chr,popType,WindowSize,log_dir)
+        
+    return("DONE!")
+
+def correct_chr_read(chr_dir,n_chr,popType,WindowSize,log_dir):
+   
     if popType == "SSD" or popType =="DH":
         export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_4.txt")
         export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_5.txt")
         
-        print("Starting: %s" % export_file_path_filt)
-        print("PopType: %s" % popType)
-       
+        
         split_file = pd.read_csv(export_file_path_filt, sep=" ")
         chr_pos =  split_file["#"]
         sp_cols = list(split_file.columns)
@@ -38,11 +47,7 @@ def chr_read(chr_dir,n_chr,popType,WindowSize):
         sp_cols.remove(sp_cols[0])
         split_file = split_file.drop(columns=['#'])
         split_file = split_file.to_numpy()
-        print("Inds: %s" % str(split_file.shape[1]))
-        print("Chr pos: %s" % str(split_file.shape[0]))
-        
-        start_time = time.time()
-        
+            
         for i in prange(split_file.shape[1]):
             tp=correct_loci_col(split_file,WindowSize,sp_cols,i)
             split_file2.iloc[:,(i+1)] = tp
@@ -50,14 +55,18 @@ def chr_read(chr_dir,n_chr,popType,WindowSize):
         split_file2["#"] = chr_pos
         split_file2.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
         split_file = pd.read_csv(export_file_path_filt, sep=" ")
-        scl = changes_count(split_file2,split_file)
-        print("--- %s seconds ---" % (time.time() - start_time))
-        return(scl)
-            
+        
+             
     elif popType == "F2" or popType == "BC1":
-       print("PopType: %s" % popType)
-       scl =0
-       return(scl)
+        print("no changes")
+        
+    scl = changes_count(split_file2,split_file)
+    data =[["step","prefiltering"],
+           ["chr",n_chr],
+           ["changes",scl]]
+    log_file_df = pd.DataFrame(data,columns=["item","status"])
+    log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step5.log",index = False, header=True)
+    return(scl)
         
 
 def correct_loci_col(split_file,WindowSize,sp_cols,i): 
@@ -101,33 +110,35 @@ def changes_count(split_file2,split_file):
     #print("Sum of SNPs changed was", s_cl)
     
     
-chr_dir = "E:/CHR"  
+#chr_dir = "E:/CHR"  
 #n_chr = str(1)
-popType = "SSD"
-WindowSize=7    
+#popType = "SSD"
+#WindowSize=7    
 #num=mp.cpu_count()
 #print("Number of processors: ", mp.cpu_count())
 #x = chr_read(chr_dir,n_chr,popType,WindowSize,num)
 
-x=[]
-for a in prange(1,12+1):
-    nchr = str(a)
-    x.append(chr_read(chr_dir,nchr,popType,WindowSize))
 
-"""
-x=[]
-for a in prange(1,12+1):
-    nchr = str(a)
-    x.append(chr_read(chr_dir,nchr,popType,WindowSize,num))
 
-pool = mp.Pool(mp.cpu_count())
-results = pool.starmap(chr_read, [(chr_dir,n_chr,popType,WindowSize,num) for n_chr in list(range(1,13))])
-pool.close()
-tp2 = ThreadPool(num)
-for a in range(1,12+1):
-    nchr = str(a)        
-    tp2.apply_async(chr_read(chr_dir,nchr,popType,WindowSize,num))
-tp2.close()
-"""
+#x=[]
+#for a in prange(1,12+1):
+#    nchr = str(a)
+#    x.append(correct_chr_read(chr_dir,nchr,popType,WindowSize))
+
+
+#x=[]
+#for a in prange(1,12+1):
+#    nchr = str(a)
+#    x.append(chr_read(chr_dir,nchr,popType,WindowSize,num))
+#
+#pool = mp.Pool(mp.cpu_count())
+#results = pool.starmap(chr_read, [(chr_dir,n_chr,popType,WindowSize,num) for n_chr in list(range(1,13))])
+#pool.close()
+#tp2 = ThreadPool(num)
+#for a in range(1,12+1):
+#    nchr = str(a)        
+#    tp2.apply_async(chr_read(chr_dir,nchr,popType,WindowSize,num))
+#tp2.close()
+
 
 

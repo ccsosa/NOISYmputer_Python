@@ -10,19 +10,22 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 
-def remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt):
+def remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt,log_dir):
     
-    for i in tqdm(range(1,n_chrs+1),desc="filtering snps"):
-        n_chr=str(i)
-        remove_dup_snp_step(chr_dir,n_chr,missing_opt=missing_opt)
+    for i in tqdm(range(1,len(n_chrs)),desc="filtering snps"):
+        n_chr=str(n_chrs[i])
+        print(n_chr)
+        remove_dup_snp_step(chr_dir,n_chr,missing_opt,log_dir)
     return("DONE!")
     
 
-def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
+def remove_dup_snp_step(chr_dir,n_chr,missing_opt,log_dir):
 
     export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_3.txt")
     export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_4.txt")
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
+    split_file2 = pd.read_csv(export_file_path_filt, sep=" ")
+
     sp_cols = list(split_file.columns)
     sp_cols.remove(sp_cols[0])
     
@@ -40,21 +43,23 @@ def remove_dup_snp_step(chr_dir,n_chr,missing_opt):
         split_file = split_file.drop_duplicates('STRING')
         split_file = split_file.drop(columns=['STRING'])
         split_file.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
-        return(print(export_file_path_filt2+" filtered!"))
     elif(missing_opt=="classic"):
         print("using missing data")
         split_file = split_file.drop_duplicates(subset=sp_cols)
         split_file.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
-        return(print(export_file_path_filt2+" filtered!"))
     else:
         print("error,not valid method chosen")
         sys.exit()
     
     
-   
+    changed =split_file2.shape[0]-split_file.shape[0]
+    data =[["step","prefiltering"],
+                                  ["chr",n_chr],
+                                  ["changes",changed]]
+    log_file_df = pd.DataFrame(data,columns=["item","status"])
+    log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step4.log",index = False, header=True)
+        
+    return(print(export_file_path_filt2+" filtered!"))
 
 
-chr_dir = "E:/CHR"
-#n_chr = str(1)
-
-remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt="missing")
+#remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt="missing")

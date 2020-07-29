@@ -8,14 +8,20 @@ IMPUTE SINGLETONS IN BREAKPOINTS
 import pandas as pd
 import numpy as np
 from numba import prange
-import time
 import copy
+from tqdm import tqdm
 
-def correct_singletons_break(chr_dir,n_chr,chr_sep): 
-    start_time = time.time()
-    export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_7.txt")
-    export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_9.txt")
-    print("Starting step 9: %s" % export_file_path_filt)
+def correct_singletons_break_chr(n_chrs,chr_dir2,chr_sep,log_dir): 
+    for i in tqdm(range(len(n_chrs)),desc="Breakpoint singletons"):
+        n_chr=str(n_chrs[i])
+        correct_singletons_break(n_chr,chr_dir2,chr_sep,log_dir)
+        
+    return("DONE!")
+
+
+def correct_singletons_break(n_chr,chr_dir2,chr_sep,log_dir): 
+    export_file_path_filt = (chr_dir2+"/"+"Chr"+n_chr+"_step_8.txt")
+    export_file_path_filt2 = (chr_dir2+"/"+"Chr"+n_chr+"_step_9.txt")
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
     chr_pos =  split_file["#"]
     chr_pos_num = split_file["#"].str.split(chr_sep,n=1,expand=True)
@@ -26,8 +32,6 @@ def correct_singletons_break(chr_dir,n_chr,chr_sep):
     sp_cols.remove(sp_cols[0])
     split_file = split_file.drop(columns=['#'])
     split_file = split_file.to_numpy()
-    print("Inds: %s" % str(split_file.shape[1]))
-    print("Chr pos: %s" % str(split_file.shape[0]))
     for x in prange(split_file.shape[1]):
         #print("ind: %s" % str(x+1))
         tp=mark_single_rows(split_file,sp_cols,chr_pos_num,x)
@@ -37,8 +41,12 @@ def correct_singletons_break(chr_dir,n_chr,chr_sep):
     split_file2.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
     split_file = pd.read_csv(export_file_path_filt, sep=" ")
     scl = changes_count(split_file2,split_file)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return(scl)
+ 
+    data =[["step","Breakpoint singletons"],
+           ["chr",n_chr],
+           ["changes",scl]]
+    log_file_df = pd.DataFrame(data,columns=["item","status"])
+    log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step9.log",index = False, header=True)
     
 def mark_single_rows(split_file,sp_cols,chr_pos_num,i):
     #i =1
@@ -108,13 +116,3 @@ def changes_count(split_file2,split_file):
     s_cl = sum(counts_list)
     return(s_cl)               
                 
-    
-  
-chr_dir = "E:/CHR"  
-n_chr = str(1)
-chr_sep = "_"
-
-x=[]
-for a in prange(1,12+1):#12+1):
-    n_chr = str(a)
-    x.append(correct_singletons_break(chr_dir,n_chr,chr_sep))

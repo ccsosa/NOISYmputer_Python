@@ -10,17 +10,23 @@ FILLING MISSING DATA
 import pandas as pd
 import numpy as np
 from numba import prange
-import time
+from tqdm import tqdm
 import copy
 
 #https://www.pythonmania.net/es/2013/04/05/control-de-bucles-break-continue-y-pass/
 #https://note.nkmk.me/en/python-numpy-where/
-def chr_read_missing_data(chr_dir,n_chr):
-       start_time = time.time()
+def chr_read_missing_data_chr(chr_dir,n_chrs,log_dir):
+    for i in tqdm(range(0,len(n_chrs)),desc="filtering snps, filling missing data"):
+        n_chr=str(n_chrs[i])
+        chr_read_missing_data(chr_dir,n_chr,log_dir)
+        
+    return("DONE!")
+
+
+def chr_read_missing_data(chr_dir,n_chr,log_dir):
        export_file_path_filt = (chr_dir+"/"+"Chr"+n_chr+"_step_5.txt")
        export_file_path_filt2 = (chr_dir+"/"+"Chr"+n_chr+"_step_6.txt")
 
-       print("Starting step 6: %s" % export_file_path_filt)
        split_file = pd.read_csv(export_file_path_filt, sep=" ")
        chr_pos =  split_file["#"]
        sp_cols = list(split_file.columns)
@@ -28,9 +34,6 @@ def chr_read_missing_data(chr_dir,n_chr):
        sp_cols.remove(sp_cols[0])
        split_file = split_file.drop(columns=['#'])
        split_file = split_file.to_numpy()
-       print("Inds: %s" % str(split_file.shape[1]))
-       print("Chr pos: %s" % str(split_file.shape[0]))
-       
        for x in prange(split_file.shape[1]):
            #print("ind: %s" % str(x+1))
            tp=correct_loci_col_miss(split_file,x)
@@ -39,8 +42,14 @@ def chr_read_missing_data(chr_dir,n_chr):
        split_file2["#"] = chr_pos
        split_file2.to_csv(export_file_path_filt2,index = False, header=True,sep=" ")
        split_file = pd.read_csv(export_file_path_filt, sep=" ")
+       
        scl = changes_count(split_file2,split_file)
-       print("--- %s seconds ---" % (time.time() - start_time))
+       data =[["step","prefiltering"],
+           ["chr",n_chr],
+           ["changes",scl]]
+       log_file_df = pd.DataFrame(data,columns=["item","status"])
+       log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step6.log",index = False, header=True)
+        
        return(scl)
 
 def correct_loci_col_miss(split_file,i):
@@ -85,11 +94,3 @@ def changes_count(split_file2,split_file):
     s_cl = sum(counts_list)
     return(s_cl)    
 
-chr_dir = "E:/CHR"  
-#n_chr = 1
-#chr_read_missing_data(chr_dir,n_chr)
-
-x=[]
-for a in prange(1,12+1):#12+1):
-    n_chr = str(a)
-    x.append(chr_read_missing_data(chr_dir,n_chr))
