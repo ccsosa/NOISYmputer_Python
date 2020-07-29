@@ -6,6 +6,48 @@ Created on Fri Jul 24 21:30:18 2020
 """
 
 import os
+import sys
+sys.path.append("E:/CHR/TEST/SCRIPTS")
+
+#PREFILTERING
+from  STEP1_VCF_TO_MAPMAKER import transform_vcf_to_mapmaker
+from  STEP2_SPLIT_CHROMOSOME import split_by_chromosome
+from  STEP3_FILTERING_SNP_STEP import filtering_snp_step_chr
+from  STEP3_FILTERING_SNP_STEP import filtering_snp_step
+from  STEP4_FILTERING_MISSING_DUPS import remove_dup_snp_step_chr
+from  STEP4_FILTERING_MISSING_DUPS import remove_dup_snp_step
+from  STEP5_CORRECT_ERRORS import correct_chr_read_chr
+from  STEP5_CORRECT_ERRORS import correct_chr_read
+from  STEP5_CORRECT_ERRORS import correct_loci_col
+from  STEP6_FILLING_MISSING_DATA import chr_read_missing_data_chr
+from  STEP6_FILLING_MISSING_DATA import chr_read_missing_data
+from  STEP6_FILLING_MISSING_DATA import correct_loci_col_miss
+from  STEP7_MARK_INCOHERENT import correct_loci_row_chr
+from  STEP7_MARK_INCOHERENT import correct_loci_row
+#POST-IMPUTATION
+from  STEP8_IMPUTATION import imputation_chr
+from  STEP8_IMPUTATION import imputation
+from  STEP8_IMPUTATION import imputation_col
+from  STEP8_IMPUTATION import imputation_0
+from  STEP8_IMPUTATION import imputation_met1
+from  STEP8_IMPUTATION import imputation_met2
+from  STEP8_IMPUTATION import imputation_met3
+from  STEP9_SINGLETONS_BREAKS import correct_singletons_break_chr
+from  STEP9_SINGLETONS_BREAKS import correct_singletons_break
+from  STEP9_SINGLETONS_BREAKS import mark_single_rows
+from  STEP10_SMALL_CHUNKS import small_chunks_step_chr
+from  STEP10_SMALL_CHUNKS import small_chunks_step
+from  STEP10_SMALL_CHUNKS import Chunk_col
+from  STEP10_SMALL_CHUNKS import CountBKPT
+from  STEP10_SMALL_CHUNKS import RecFreq_F2
+from  STEP10_SMALL_CHUNKS import Kosambi
+from  STEP10_SMALL_CHUNKS import Haldane
+#AUXILIAR EXPRESSIONS
+from  STEP0_COUNT_CHANGES import changes_count
+from  STEP0_PLOT_CHR import chr_plot_all
+from  STEP0_PLOT_CHR import chr_plot
+from  STEP0_IMP_STATS import imp_stats
+
 
 
 def NOISYmputer_pipeline(pop_markers_params,prefiltering_SNPs_params,filtering_incoherent_SNPs_params,imputation_params_step1,imputation_params_step2,imputation_params_step3,Breakpoint_singletons_params,improbable_chunks_params_params,Alien_segments_params):

@@ -67,7 +67,7 @@ def imp_stats(step,n_chr,chr_dir,char_sep,out_dir):
     plt.close()   
     return("plotted")
  
-
+"""
 n_chrs = list(range(1,12+1))
 n_chr=1
 steps=list(range(2,10))
@@ -82,3 +82,4 @@ for i in tqdm(range(len(n_chrs)),desc="Plotting chromosome"):
         imp_stats(step,n_chr,chr_dir,char_sep,out_dir) #step 9
 
 #x= imp_stats(step,n_chr,chr_dir,char_sep,out_dir)
+"""

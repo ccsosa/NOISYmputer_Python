@@ -16,7 +16,6 @@ from tqdm import tqdm
 #size = 10**5  # CHANGED
 
 
-
 def filtering_snp_step_chr(chr_dir,n_chrs,maxFreqMD,maxFreqH,minFreqA,minFreqB,log_dir):
     for i in tqdm(range(0,len(n_chrs)),desc="filtering snps"):
         n_chr=str(n_chrs[i])

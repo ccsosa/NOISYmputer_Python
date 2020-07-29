@@ -10,7 +10,6 @@ Created on Thu Apr 16 21:47:37 2020
 #def Nwindows_stats():
 import pandas as pd
 import numpy as np
-from numba import prange
 import copy
 from tqdm import tqdm
 
@@ -128,17 +127,3 @@ def correct_loci_row(chr_dir,n_chr,Chi2threshold,WindowSize,log_dir):
     
     log_file_df = pd.DataFrame(data,columns=["item","status"])
     log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step5.log",index = False, header=True)
-
-def changes_count(split_file2,split_file):
-    sp_cols = list(split_file2.columns)
-    sp_cols.remove(sp_cols[0])
-    counts_list=[]
-    count_append = counts_list.append
-    for a in range(len(sp_cols)):
-        sp_count = split_file2[sp_cols[a]]==split_file[sp_cols[a]]
-        sp_count = sp_count[sp_count==False].count()
-        count_append(sp_count)
-    s_cl = sum(counts_list)
-    return(s_cl)    
-
-    
