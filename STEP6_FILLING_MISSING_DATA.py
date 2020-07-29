@@ -12,7 +12,9 @@ import numpy as np
 from numba import prange
 from tqdm import tqdm
 import copy
-
+import sys
+sys.path.append("E:/CHR/TEST/SCRIPTS")
+from  STEP0_COUNT_CHANGES import changes_count
 #https://www.pythonmania.net/es/2013/04/05/control-de-bucles-break-continue-y-pass/
 #https://note.nkmk.me/en/python-numpy-where/
 def chr_read_missing_data_chr(chr_dir,n_chrs,log_dir):
@@ -50,7 +52,7 @@ def chr_read_missing_data(chr_dir,n_chr,log_dir):
        log_file_df = pd.DataFrame(data,columns=["item","status"])
        log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step6.log",index = False, header=True)
         
-       return(scl)
+       return("DONE!")
 
 def correct_loci_col_miss(split_file,i):
     col_data = copy.deepcopy(split_file[:,i])

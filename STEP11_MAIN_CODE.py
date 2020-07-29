@@ -238,7 +238,7 @@ improbable_chunks_params = [
           ["max local recomb rate in chunk (cM/Mbp)",500]
           ]
 
-Alien_segments_params =  [
+     =  [
           ["max window size",100],
           ["maxRF",0.01],
           ["slope threshold",10],

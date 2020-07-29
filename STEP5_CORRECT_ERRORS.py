@@ -14,6 +14,9 @@ from numba import prange
 #import multiprocessing as mp
 import copy
 from tqdm import tqdm
+import sys
+sys.path.append("E:/CHR/TEST/SCRIPTS")
+from  STEP0_COUNT_CHANGES import changes_count
 
 #from multiprocessing import Pool
 #from multiprocessing.pool import ThreadPool
@@ -66,7 +69,6 @@ def correct_chr_read(chr_dir,n_chr,popType,WindowSize,log_dir):
            ["changes",scl]]
     log_file_df = pd.DataFrame(data,columns=["item","status"])
     log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step5.log",index = False, header=True)
-    return(scl)
         
 
 def correct_loci_col(split_file,WindowSize,sp_cols,i): 

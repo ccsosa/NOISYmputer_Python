@@ -12,7 +12,7 @@ from tqdm import tqdm
 def imputation_chr(chr_dir,chr_sep,n_chrs,chr_dir2,imputation_params_options,imputation_params_step1_params,imputation_params_step2_params,imputation_params_step3_params,log_dir): 
     
     
-    for i in tqdm(range(len(n_chrs)),desc="Breakpoint singletons"):
+    for i in tqdm(range(len(n_chrs)),desc="Imputation"):
         n_chr=str(n_chrs[i])
         imputation(chr_dir,chr_sep,n_chr,chr_dir2,imputation_params_options,imputation_params_step1_params,imputation_params_step2_params,imputation_params_step3_params,log_dir)
         

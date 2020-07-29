@@ -9,6 +9,10 @@ import pandas as pd
 from numba import prange
 import copy
 from tqdm import tqdm
+import sys
+sys.path.append("E:/CHR/TEST/SCRIPTS")
+from  STEP0_COUNT_CHANGES import changes_count
+
 
 def correct_singletons_break_chr(n_chrs,chr_dir2,chr_sep,log_dir): 
     for i in tqdm(range(len(n_chrs)),desc="Breakpoint singletons"):

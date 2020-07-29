@@ -12,6 +12,9 @@ import pandas as pd
 import numpy as np
 import copy
 from tqdm import tqdm
+import sys
+sys.path.append("E:/CHR/TEST/SCRIPTS")
+from  STEP0_COUNT_CHANGES import changes_count
 
 def correct_loci_row_chr(chr_dir,n_chrs,Chi2threshold,WindowSize,log_dir): 
     for i in tqdm(range(len(n_chrs)),desc="Mark and filter incoherent loci"):

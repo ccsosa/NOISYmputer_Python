@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 def remove_dup_snp_step_chr(chr_dir,n_chrs,missing_opt,log_dir):
     
-    for i in tqdm(range(1,len(n_chrs)),desc="filtering snps"):
+    for i in tqdm(range(len(n_chrs)),desc="filtering snps"):
         n_chr=str(n_chrs[i])
         print(n_chr)
         remove_dup_snp_step(chr_dir,n_chr,missing_opt,log_dir)
