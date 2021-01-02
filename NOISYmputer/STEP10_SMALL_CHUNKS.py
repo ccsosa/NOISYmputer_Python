@@ -10,7 +10,8 @@ import numpy as np
 from numba import prange
 import copy
 from tqdm import tqdm
-
+import more_itertools as mit
+import csv
 
 
 def small_chunks_step_chr(chr_dir2,n_chrs,smallChunkMaxSize,minEnvirRecRate,chunkEnvironmentMultiplier,maxChunkRecRate,nbOfParents,popSize,mappingFunction,chr_sep,popType,log_dir):
@@ -53,6 +54,47 @@ def small_chunks_step(chr_dir2,n_chr,smallChunkMaxSize,minEnvirRecRate,chunkEnvi
    log_file_df = pd.DataFrame(data,columns=["item","status"])
    log_file_df.to_csv(log_dir+"/"+"Chr"+n_chr+"_step9.log",index = False, header=True)
 
+def freq_chunk_preprocess(split_file):
+    freqCounts = np.zeros((split_file.shape[0], 4))
+    for i in range(split_file.shape[0]):
+        freqCounts[i,0] = np.sum(split_file[i,:]=="A")
+        freqCounts[i,1] = np.sum(split_file[i,:]=="B")
+        freqCounts[i,2] = np.sum(split_file[i,:]=="H")
+        freqCounts[i,3] = np.sum(split_file[i,:]=="-")
+
+    return(freqCounts)
+
+freqCounts  = freq_chunk_preprocess(split_file=split_file)
+
+
+    
+def col_chunk_preprocess(split_file):
+    colCounts = []
+    for i in range(split_file.shape[1]):
+        x = list(split_file[:,i])
+        x2 = np.where(np.asarray(x)=="-")[0]
+        x2 = [item.tolist() for item in x2]
+        x2 = [list(group) for group in mit.consecutive_groups(x2)]
+        
+        for j in range(len(x2)):
+            colCounts_df = np.array(
+            [i,
+            np.min(x2[j]),
+            np.max(x2[j]),
+            len(x2[j])
+            ])
+            colCounts.append(colCounts_df)
+    #colCounts = np.concatenate(colCounts)
+    colCounts = np.stack(colCounts, axis=0)
+
+    return(colCounts)
+
+colCounts  = col_chunk_preprocess(split_file=split_file)
+#ind = np.lexsort((colCounts[:,0], colCounts[:,3]))
+#colCounts = colCounts[ind]
+np.savetxt("D:/counts.csv", colCounts, delimiter=",")
+
+            
 def Chunk_col(split_file,chr_pos_num,smallChunkMaxSize,chunkEnvironmentMultiplier,minEnvirRecRate,maxChunkRecRate,nbOfParents,mappingFunction,popSize,popType,i):
    # i = 0
     col_data = split_file[:,i]
